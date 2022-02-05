@@ -2,6 +2,8 @@ var express = require('express');
 var router = express.Router();
 const oauth = require('../../discordApi')
 const { User } = require('../db/models')
+const { requireDiscordLogin } = require('../middleware')
+
 router.get('/discord/callback', function (req, res, next) {
   if (req.query.code) {
     oauth.tokenRequest({
@@ -24,5 +26,11 @@ router.get('/discord/callback', function (req, res, next) {
     res.send('no code');
   }
 });
+
+router.get('/check', requireDiscordLogin, async (req, res, next) => {
+  res.json({
+    authed: true,
+  })
+})
 
 module.exports = router;

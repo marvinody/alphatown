@@ -10,6 +10,7 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var authRouter = require('./routes/auth');
+var pinsRouter = require('./routes/pins');
 
 var app = express();
 
@@ -34,11 +35,17 @@ app.use('/', indexRouter);
 
 app.use('/users', usersRouter);
 app.use('/auth', authRouter);
+app.use('/pins', pinsRouter);
 
 app.use((err, req, res, next) => {
   console.error(err)
   console.error(err.stack)
-  res.status(err.status || 500).send(err.message || 'Internal server error.')
+  const status = err.status || 500
+  res.status(status)
+  res.render('error', {
+    title: `${status} Error`, 
+    message: err.message || "Unexpected Server Error",
+  });
 })
 
 module.exports = app;
