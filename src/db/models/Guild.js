@@ -1,15 +1,16 @@
 const Sequelize = require('sequelize')
 const db = require('../db')
 
-const User = db.define('user', {
+const Guild = db.define('guild', {
   discordId: {
     type: Sequelize.STRING,
     primaryKey: true,
   },
-  refreshToken: {
-    type:Sequelize.STRING,
+  name: {
+    type: Sequelize.STRING,
+    allowNull: false,
   }
 })
 
-module.exports = User
+module.exports = Guild
 
