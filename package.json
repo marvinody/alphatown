@@ -3,12 +3,23 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "dev": "nodemon -e js,pug -w src -w views"
   },
   "dependencies": {
+    "connect-session-sequelize": "^7.1.2",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
+    "discord-oauth2": "^2.9.0",
     "express": "~4.16.1",
-    "morgan": "~1.9.1"
+    "express-session": "^1.17.2",
+    "morgan": "~1.9.1",
+    "pg": "^8.7.3",
+    "pg-hstore": "^2.3.4",
+    "pug": "^3.0.2",
+    "sequelize": "^6.15.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
   }
 }
