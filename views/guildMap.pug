@@ -1,0 +1,15 @@
+html
+  include includes/mapbox.pug
+  include includes/styles.pug
+  head
+    title= title
+
+    script(
+      src='/javascript/main.js'
+      defer
+    )
+  body
+    h1= message
+    div#map(
+
+    )

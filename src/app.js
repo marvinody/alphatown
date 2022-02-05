@@ -11,6 +11,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var authRouter = require('./routes/auth');
 var pinsRouter = require('./routes/pins');
+var mapsRouter = require('./routes/maps');
 
 var app = express();
 
@@ -36,6 +37,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/auth', authRouter);
 app.use('/pins', pinsRouter);
+app.use('/maps', mapsRouter);
 
 app.use((err, req, res, next) => {
   console.error(err)
