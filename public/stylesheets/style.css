@@ -50,3 +50,13 @@ a {
 .drop-pin {
     cursor: pointer;
 }
+
+.modal {
+    background-color: grey;
+    position: absolute;
+    max-width: 80%;
+    min-width: 40%;
+    left: 10%;
+    display: flex;
+    flex-direction: column;
+}

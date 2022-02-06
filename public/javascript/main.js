@@ -99,6 +99,10 @@ map.on('load', async() => {
         const user = await axios.get('/auth/me')
         $('.discord-login').hide()
         $('.drop-pin').show()
+
+        $('.drop-pin').click(() => {
+            $('#pin-edit').show()
+        })
     } catch (err) {
 
     }

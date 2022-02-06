@@ -24,5 +24,18 @@ html
     div.drop-pin.hide.action-corner.top.right
       span Drop your Pin
 
-    div.modal.pin-edit.hide
-      input
+    div.modal#pin-edit.hide
+      label(
+        for='title'
+      ) Title
+      input(
+        name='title'
+        placeholder='Who lives here?'
+      )
+      textarea(
+        placeholder='desc'
+      )
+      input(
+        type='file',
+
+      )
