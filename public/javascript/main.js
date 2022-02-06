@@ -91,4 +91,14 @@ map.on('load', async () => {
     map.getCanvas().style.cursor = '';
   });
 
-})
+});
+
+
+(async () => {
+  try {
+    const user = await axios.get('/auth/me')
+    $('.discord-login').hide()
+  } catch (err) {
+
+  }
+})();

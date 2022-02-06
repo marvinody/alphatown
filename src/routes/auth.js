@@ -10,7 +10,6 @@ router.get('/discord/callback', function (req, res, next) {
       code: req.query.code,
       scope: "identify guilds",
       grantType: "authorization_code",
-
     }).then(e => {
       console.log(e)
       req.session.discord = e
@@ -30,10 +29,10 @@ router.get('/discord/callback', function (req, res, next) {
 router.get('/me', requireDiscordLogin, async (req, res, next) => {
 
   const user = await oauth.getUser(req.session.discord.access_token)
-  console.log(user)
 
   res.json({
     authed: true,
+    user,
   })
 })
 
