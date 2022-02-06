@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const oauth = require('../../discordApi')
-const { User } = require('../db/models')
+const { Pin } = require('../db/models')
 const { requireDiscordLogin, requireDiscordGuild } = require('../middleware')
 router.get('/', async (req, res, next) => {
 
@@ -11,6 +11,14 @@ router.get('/', async (req, res, next) => {
 
   res.json(guilds)
 });
+
+router.get('/:guildId', async (req, res, next) => {
+
+  const pins = await Pin.findAllPublic(req.params.guildId)
+
+  res.json(pins)
+
+})
 
 
 router.get('/belongs-to/:guildId',

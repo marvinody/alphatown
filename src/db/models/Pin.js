@@ -2,7 +2,7 @@ const Sequelize = require('sequelize')
 const db = require('../db')
 
 const Pin = db.define('pin', {
-  
+
   lat: {
     type:Sequelize.FLOAT,
     allowNull: false,
@@ -35,6 +35,16 @@ const Pin = db.define('pin', {
     }
   }
 })
+
+Pin.findAllPublic = async function(guildDiscordId) {
+  return this.findAll({
+    where: {
+      approved: true,
+      guildDiscordId,
+    },
+    attributes: 'lat lng title desc imageUrl createdAt updatedAt'.split(' ')
+  })
+}
 
 module.exports = Pin
 

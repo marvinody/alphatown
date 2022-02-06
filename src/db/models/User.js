@@ -6,9 +6,6 @@ const User = db.define('user', {
     type: Sequelize.STRING,
     primaryKey: true,
   },
-  refreshToken: {
-    type:Sequelize.STRING,
-  }
 })
 
 module.exports = User
