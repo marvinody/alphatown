@@ -27,9 +27,10 @@ router.get('/discord/callback', function (req, res, next) {
   }
 });
 
-router.get('/check', requireDiscordLogin, async (req, res, next) => {
+router.get('/me', requireDiscordLogin, async (req, res, next) => {
 
   const user = await oauth.getUser(req.session.discord.access_token)
+  console.log(user)
 
   res.json({
     authed: true,

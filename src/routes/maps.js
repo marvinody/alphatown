@@ -3,11 +3,16 @@ var router = express.Router();
 const oauth = require('../../discordApi')
 const { User } = require('../db/models')
 const { requireDiscordLogin, requireDiscordGuild } = require('../middleware')
+const url = oauth.generateAuthUrl({
+  scope: ["identify", "guilds"],
+})+"&test_query_param=true";
+
 
 router.get('/:guildId', async (req, res, next) => {
   res.render('guildMap', {
     title: "Server Maps",
-    guildId: req.params.guildId
+    guildId: req.params.guildId,
+    oauth_url: url,
   })
 })
 
