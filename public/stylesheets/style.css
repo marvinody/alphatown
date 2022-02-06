@@ -1,31 +1,52 @@
 body {
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-  margin: 0px;
+    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    margin: 0px;
 }
 
 a {
-  color: #00B7FF;
+    color: #00B7FF;
 }
 
-#map { 
-  position: absolute; 
-  top: 0; 
-  bottom: 0;
-   width: 100%; 
+.hide {
+    display: none
+}
+
+#map {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
 }
 
 #map .mapboxgl-popup-content img {
-  max-width: 100%;
-  max-height: 100%;
+    max-width: 100%;
+    max-height: 100%;
 }
 
-.discord-login {
-  font-size: 1.5rem;
-  position:absolute;
-  top: 0px;
-  left: 0px;
-  margin:16px 0 0 16px;
-  padding: 8px;
-  border-radius: 8px;
-  background-color: white;
+.action-corner {
+    font-size: 1.5rem;
+    padding: 8px;
+    margin: 0;
+    border-radius: 8px;
+    background-color: white;
+    position: absolute;
+}
+
+.top {
+    top: 0px;
+    margin-top: 16px;
+}
+
+.left {
+    left: 0px;
+    margin-left: 16px;
+}
+
+.right {
+    right: 0px;
+    margin-right: 16px;
+}
+
+.drop-pin {
+    cursor: pointer;
 }

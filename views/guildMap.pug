@@ -15,8 +15,14 @@ html
     div#map(
 
     )
-    div.discord-login
+    div.discord-login.action-corner.top.left
       a(href=oauth_url) Login with Discord
 
     div.discord-logout
       a(href='/auth/logout') Logout
+
+    div.drop-pin.hide.action-corner.top.right
+      span Drop your Pin
+
+    div.modal.pin-edit.hide
+      input
