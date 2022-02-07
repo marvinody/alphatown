@@ -35,6 +35,8 @@ html
           input(
             name='title'
             placeholder='Cute title for others to see'
+            maxlength=80
+            required=true
           )
       div.form-row
         label(
@@ -43,8 +45,9 @@ html
         div.input-container
           textarea(
             name='desc'
-            placeholder='Longer description for '
+            placeholder='Longer description for friends to read'
             rows=6
+            maxlength=160
           )
 
       div.form-row
@@ -55,4 +58,12 @@ html
           input(
             name='image'
             type='file',
+            required=true
+            accept='image/*'
+            multiple=false
           )
+      
+      div.form-row
+        span.trigger-coord-select Click to choose location
+
+    div#coordinates.coordinates
