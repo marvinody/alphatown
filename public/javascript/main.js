@@ -97,11 +97,21 @@ map.on('load', async() => {
 (async() => {
     try {
         const user = await axios.get('/auth/me')
-        $('.discord-login').hide()
-        $('.drop-pin').show()
+        $('.discord-login').addClass('hide')
+        $('.drop-pin').removeClass('hide')
 
         $('.drop-pin').click(() => {
-            $('#pin-edit').show()
+            $('#pin-edit').removeClass('hide')
+            $('.drop-pin').addClass('hide')
+          })
+          
+          
+          $('#pin-edit .close-button span').click(() => {
+            // hide edit, show drop
+            $('#pin-edit').addClass('hide')
+            $('.drop-pin').removeClass('hide')
+
+
         })
     } catch (err) {
 

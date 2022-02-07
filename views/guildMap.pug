@@ -24,18 +24,35 @@ html
     div.drop-pin.hide.action-corner.top.right
       span Drop your Pin
 
-    div.modal#pin-edit.hide
-      label(
-        for='title'
-      ) Title
-      input(
-        name='title'
-        placeholder='Who lives here?'
-      )
-      textarea(
-        placeholder='desc'
-      )
-      input(
-        type='file',
+    div.modal#pin-edit.hide.form-group
+      div.close-button
+        span X
+      div.form-row
+        label(
+          for='title'
+        ) Title* (80)
+        div.input-container
+          input(
+            name='title'
+            placeholder='Cute title for others to see'
+          )
+      div.form-row
+        label(
+          for='desc'
+        ) Description (160)
+        div.input-container
+          textarea(
+            name='desc'
+            placeholder='Longer description for '
+            rows=6
+          )
 
-      )
+      div.form-row
+        label(
+          for='image'
+        ) Image*
+        div.input-container
+          input(
+            name='image'
+            type='file',
+          )

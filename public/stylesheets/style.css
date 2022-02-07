@@ -8,7 +8,7 @@ a {
 }
 
 .hide {
-    display: none
+    display: none !important;
 }
 
 #map {
@@ -56,7 +56,65 @@ a {
     position: absolute;
     max-width: 80%;
     min-width: 40%;
-    left: 10%;
     display: flex;
     flex-direction: column;
+    position: absolute;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    text-align: center;
+}
+
+.form-row {
+    display: flex;
+    flex-direction: column;
+    margin-top: 16px;
+}
+
+.input-container {
+    display: flex;
+    flex: 3;
+    padding: 8px 16px;
+}
+
+.input-container input, .input-container textarea {
+    width: 100%;
+    font-size: 16px;
+    font-size: max(16px, 1em);
+    font-family: inherit;
+    padding: 0.25em 0.5em;
+    background-color: #fff;
+    border: 2px solid var(--input-border);
+    border-radius: 4px;
+}
+
+.form-group {
+    padding: 24px;
+}
+
+
+.form-group label {
+    padding: 8px 16px;
+    margin-right: 8px;
+    border-radius: 8px;
+    flex: 1;
+    font-size: 2em;
+}
+
+.close-button {
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+.close-button span {
+    background-color: white;
+    padding: 8px;
+    cursor: pointer;
+}
+
+@media only screen and (min-width: 768px) {
+    .form-row {
+        flex-direction: row;
+    }
 }
