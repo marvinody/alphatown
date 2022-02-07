@@ -46,7 +46,7 @@ const apiDataToMapboxFeature = data => {
         },
         geometry: {
           type: 'Point',
-          coordinates: [pt.lat, pt.lng]
+          coordinates: [pt.lng, pt.lat]
         }
       }))
     }
@@ -214,11 +214,11 @@ const checkDescriptionErrors = (errors) => {
 
 const checkImageErrors = (errors) => {
   const file = $("input[name='image']")[0].files[0]
-  const MAX_ALLOWED_SIZE = 10 * 1024 * 1024 // 10 MB
+  const MAX_ALLOWED_SIZE = 9 * 1000 * 1000 // 9 MB
   if (!file) {
     errors.push('You must select an image to be associated with your pin')
   } else if (file.size > MAX_ALLOWED_SIZE) {
-    errors.push('You must select an image smaller than 10 MB')
+    errors.push('You must select an image smaller than 9 MB')
   }
 }
 
@@ -248,7 +248,7 @@ const sendPinData = () => {
   const [lng, lat] = userCoordFeature.features[0].geometry.coordinates
   formData.append('lng', lng)
   formData.append('lat', lat)
-  axios.put('/pins', formData)
+  axios.put(`/pins/${guildId}`, formData)
 }
 
 

@@ -24,7 +24,7 @@ const Pin = db.define('pin', {
   desc: {
     type: Sequelize.STRING,
     allowNull: true,
-    notEmpty: true,
+    notEmpty: false,
     len: [1, 140],
   },
   imageUrl: {
