@@ -196,6 +196,60 @@ map.on('load', async () => {
 
 });
 
+const checkTitleErrors = (errors) => {
+  const title = $("input[name='title']").val()
+  if (title.length === 0) {
+    errors.push('You must give a title.')
+  } else if (title.length > 80) {
+    errors.push('Your title is too long. 80 chars max')
+  }
+}
+
+const checkDescriptionErrors = (errors) => {
+  const desc = $("textarea[name='desc']").val()
+  if (desc.length > 160) {
+    errors.push('Your desc is too long. 160 chars max')
+  }
+}
+
+const checkImageErrors = (errors) => {
+  const file = $("input[name='image']")[0].files[0]
+  const MAX_ALLOWED_SIZE = 10 * 1024 * 1024 // 10 MB
+  if (!file) {
+    errors.push('You must select an image to be associated with your pin')
+  } else if (file.size > MAX_ALLOWED_SIZE) {
+    errors.push('You must select an image smaller than 10 MB')
+  }
+}
+
+const checkCoordErrors = (errors) => {
+  const coords = userCoordFeature.features[0].geometry.coordinates
+  if (coords[0] === 0 && coords[1] === 0) {
+    errors.push("You must select a location for your pin")
+  }
+}
+
+const findFormErrors = () => {
+  const errors = []
+  checkTitleErrors(errors)
+  checkDescriptionErrors(errors)
+  checkImageErrors(errors)
+  checkCoordErrors(errors)
+
+  return errors
+}
+
+const sendPinData = () => {
+  const formData = new FormData()
+  formData.append('image', $("input[name='image']")[0].files[0])
+  formData.append('title',  $("input[name='title']").val())
+  formData.append('desc',  $("textarea[name='desc']").val())
+
+  const [lng, lat] = userCoordFeature.features[0].geometry.coordinates
+  formData.append('lng', lng)
+  formData.append('lat', lat)
+  axios.put('/pins', formData)
+}
 
 
 (async () => {
@@ -245,6 +299,19 @@ map.on('load', async () => {
     $('#pin-edit .close-button span').click(() => {
       hide('#pin-edit')
       show('.drop-pin')
+    })
+
+    $('form#pin-edit').submit(e => {
+      console.log("SUBMITTED")
+      e.preventDefault();
+
+      const errors = findFormErrors()
+      if (errors.length > 0) {
+        alert(errors.join('\n'))
+        return
+      }
+
+      sendPinData()
     })
   } catch (err) {
 

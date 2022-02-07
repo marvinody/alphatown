@@ -24,7 +24,7 @@ html
     div.drop-pin.hide.action-corner.top.right
       span Drop your Pin
 
-    div.modal#pin-edit.hide.form-group
+    form.modal#pin-edit.hide.form-group
       div.close-button
         span X
       div.form-row
@@ -63,7 +63,10 @@ html
             multiple=false
           )
       
-      div.form-row
+      div.form-row.center
         span.trigger-coord-select Click to choose location
+
+      div.form-row.right
+        button.submit-pin Submit
 
     div#coordinates.coordinates
