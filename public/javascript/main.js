@@ -14,6 +14,9 @@ const canvas = map.getCanvasContainer();
 
 const coordinatesDiv = document.getElementById('coordinates');
 
+const updateCoordText = (c) => $('.trigger-coord-select').text(`(${c.lng.toFixed(3)}, ${c.lat.toFixed(3)}) - Click to change`)
+
+
 const apiPointToMapboxDesc = pt => {
   const pieces = [
     `<strong>${pt.title}</strong>`
@@ -74,22 +77,24 @@ const onMove = (e) => {
   // and call setData to the source layer `point` on it.
   userCoordFeature.features[0].geometry.coordinates = [coords.lng, coords.lat];
   map.getSource('point').setData(userCoordFeature);
+
+  updateCoordText(coords)
 }
 
 
-// const onUp = (e) => {
-//   const coords = e.lngLat;
+const onUp = (e) => {
+  // const coords = e.lngLat;
 
-//   // Print the coordinates of where the point had
-//   // finished being dragged to on the map.
-//   coordinatesDiv.style.display = 'block';
-//   coordinatesDiv.innerHTML = `Longitude: ${coords.lng}<br />Latitude: ${coords.lat}`;
-//   canvas.style.cursor = '';
+  // // Print the coordinates of where the point had
+  // // finished being dragged to on the map.
+  // coordinatesDiv.style.display = 'block';
+  // coordinatesDiv.innerHTML = `Longitude: ${coords.lng}<br />Latitude: ${coords.lat}`;
+  // canvas.style.cursor = '';
 
-//   // Unbind mouse/touch events
-//   map.off('mousemove', onMove);
-//   map.off('touchmove', onMove);
-// }
+  // Unbind mouse/touch events
+  map.off('mousemove', onMove);
+  map.off('touchmove', onMove);
+}
 
 
 map.on('load', async () => {
@@ -176,7 +181,7 @@ map.on('load', async () => {
     canvas.style.cursor = 'grab';
 
     map.on('mousemove', onMove);
-    // map.once('mouseup', onUp);
+    map.once('mouseup', onUp);
   });
 
   map.on('touchstart', 'point', (e) => {
@@ -186,7 +191,7 @@ map.on('load', async () => {
     e.preventDefault();
 
     map.on('touchmove', onMove);
-    // map.once('touchend', onUp);
+    map.once('touchend', onUp);
   });
 
 });
@@ -225,7 +230,7 @@ map.on('load', async () => {
         })
 
         // update the text to show the user's selection
-        $('.trigger-coord-select').text(`(${Math.round(coords.lng)}, ${Math.round(coords.lat)}) - Click to change`)
+        updateCoordText(coords)
 
         show('#pin-edit')
       })
