@@ -2,6 +2,8 @@ var express = require('express');
 const multer = require('multer')
 const ImgurAnonymousUploader = require('imgur-anonymous-uploader');
 var router = express.Router();
+const FileType = require('file-type');
+
 const oauth = require('../../discordApi')
 const { Pin } = require('../db/models')
 const { requireDiscordLogin, requireDiscordGuild } = require('../middleware')
@@ -50,10 +52,22 @@ router.put('/:guildId',
       }
     })
 
-    console.log(pin)
+    if (req.file && req.file.buffer) {
+      const { ext } = await FileType.fromBuffer(req.file.buffer)
+      const allowedFiletypes = [
+        'png',
+        'jpg',
+      ];
+
+      if (!allowedFiletypes.includes(ext)) {
+        return res.status(400).json({
+          error: 'Invalid file type for image. Must be jpg/png'
+        })
+      }
+    }
 
     // user has pin linked, update existing (TODO)
-    if(pin) {
+    if (pin) {
       return res.sendStatus(204)
     }
 

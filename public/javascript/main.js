@@ -84,13 +84,12 @@ const onMove = (e) => {
 
 
 const onUp = (e) => {
-  // const coords = e.lngLat;
+  const coords = e.lngLat;
 
-  // // Print the coordinates of where the point had
-  // // finished being dragged to on the map.
-  // coordinatesDiv.style.display = 'block';
-  // coordinatesDiv.innerHTML = `Longitude: ${coords.lng}<br />Latitude: ${coords.lat}`;
-  // canvas.style.cursor = '';
+  userCoordFeature.features[0].geometry.coordinates = [coords.lng, coords.lat];
+  map.getSource('point').setData(userCoordFeature);
+
+  updateCoordText(coords)
 
   // Unbind mouse/touch events
   map.off('mousemove', onMove);
