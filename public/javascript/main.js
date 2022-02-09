@@ -16,6 +16,7 @@ const coordinatesDiv = document.getElementById('coordinates');
 
 const updateCoordText = (c) => $('.trigger-coord-select').text(`(${c.lng.toFixed(3)}, ${c.lat.toFixed(3)}) - Click to change`)
 
+const updateDropPinText = (s) => $('.drop-pin span').text(s)
 
 const apiPointToMapboxDesc = pt => {
   const pieces = [
@@ -239,16 +240,28 @@ const findFormErrors = () => {
   return errors
 }
 
+const updateFormData = ({
+  lng, lat, title, desc, imageUrl
+}) => {
+  $("input[name='image']").val('')
+  $("input[name='title']").val(title)
+  $("textarea[name='desc']").val(desc)
+  userCoordFeature.features[0].geometry.coordinates = [lng, lat]
+  updateCoordText({ lng, lat })
+}
+
 const sendPinData = () => {
   const formData = new FormData()
   formData.append('image', $("input[name='image']")[0].files[0])
-  formData.append('title',  $("input[name='title']").val())
-  formData.append('desc',  $("textarea[name='desc']").val())
+  formData.append('title', $("input[name='title']").val())
+  formData.append('desc', $("textarea[name='desc']").val())
 
   const [lng, lat] = userCoordFeature.features[0].geometry.coordinates
   formData.append('lng', lng)
   formData.append('lat', lat)
   axios.put(`/pins/${guildId}`, formData)
+
+  updateDropPinText('Pending Pin')
 }
 
 
@@ -258,9 +271,19 @@ const sendPinData = () => {
     const show = (s) => $(s).removeClass('hide')
     const hide = (s) => $(s).addClass('hide')
 
-    const user = await axios.get('/auth/me')
+    const { data: user } = await axios.get('/auth/me')
     hide('.discord-login')
     show('.drop-pin')
+
+    if (user.pin) {
+      updateFormData(user.pin)
+
+      if (user.pin.approved) {
+        updateDropPinText('Update Pin')
+      } else {
+        updateDropPinText('Pending Pin')
+      }
+    }
 
     // close #pin-edit ui, show .drop-pin
     $('.trigger-coord-select').click(() => {
@@ -293,6 +316,18 @@ const sendPinData = () => {
     $('.drop-pin').click(() => {
       show('#pin-edit')
       hide('.drop-pin')
+
+      if (user.pin && !user.pin.approved) {
+        if (user.pin.approved) {
+
+        } else {
+          map.setLayoutProperty('point', 'visibility', 'visible')
+          map.flyTo({
+            center: userCoordFeature.features[0].geometry.coordinates,
+            zoom: 11.15,
+          })
+        }
+      }
     })
 
 
@@ -314,6 +349,6 @@ const sendPinData = () => {
       sendPinData()
     })
   } catch (err) {
-
+    console.error(err)
   }
 })();

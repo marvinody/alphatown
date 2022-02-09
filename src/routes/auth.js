@@ -1,38 +1,72 @@
 var express = require('express');
 var router = express.Router();
 const oauth = require('../../discordApi')
-const { User } = require('../db/models')
+const { User, Pin } = require('../db/models')
 const { requireDiscordLogin } = require('../middleware')
 
-router.get('/discord/callback', function (req, res, next) {
+router.get('/discord/callback', async function (req, res, next) {
   if (req.query.code) {
-    oauth.tokenRequest({
-      code: req.query.code,
-      scope: "identify guilds",
-      grantType: "authorization_code",
-    }).then(e => {
-      console.log(e)
-      req.session.discord = e
+    try {
+      const discordAuth = await oauth.tokenRequest({
+        code: req.query.code,
+        scope: "identify guilds",
+        grantType: "authorization_code",
+      })
+
+      const user = await oauth.getUser(discordAuth.access_token)
+
+      await User.findOrCreate({
+        where: {
+          discordId: user.id,
+        },
+        defaults: {
+          discordId: user.id,
+        }
+      })
+
+      req.session.discord = {
+        ...discordAuth,
+        id: user.id,
+        username: user.username,
+        avatar: user.avatar,
+      }
+
       // bounce user back to main page
       res.redirect('/')
       return
-    }).catch(e => {
-      console.log(e.response)
+    } catch (err) {
       res.send('error')
-      return
-    })
+    }
   } else {
     res.send('no code');
   }
 });
 
+router.get('/logout', async (req, res, next) => {
+  req.session.destroy((err) => {
+    if(err) {
+      return next(err)
+    }
+    res.sendStatus(204)
+  });
+})
+
 router.get('/me', requireDiscordLogin, async (req, res, next) => {
 
-  const user = await oauth.getUser(req.session.discord.access_token)
+  const pin = await Pin.findOne({
+    include: {
+      model: User,
+      where: {
+        discordId: req.session.discord.id,
+      }
+    }
+  })
 
   res.json({
     authed: true,
-    user,
+    pin,
+    username: req.session.discord.username,
+    avatar: req.session.discord.avatar,
   })
 })
 
