@@ -71,6 +71,15 @@ a {
     color: #eee;
 }
 
+.title-row {
+    display:flex;
+}
+
+.title-row .title {
+    font-size: 2rem;
+    flex: 1;
+}
+
 .form-row {
     display: flex;
     flex-direction: column;

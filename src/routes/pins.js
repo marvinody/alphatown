@@ -26,7 +26,19 @@ router.get('/:guildId', async (req, res, next) => {
 
 })
 
+class BadFileTypeError extends Error {
+  constructor() {
+    super('Invalid file type for image. Must be jpg/png')
+    this.status = 400
+  }
+}
 
+class ImgurUploadError extends Error {
+  constructor() {
+    super('Unable to upload to imgur')
+    this.status = 500
+  }
+}
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -44,15 +56,10 @@ router.put('/:guildId',
   upload.single('image'),
   async (req, res, next) => {
 
-    const user = await oauth.getUser(req.session.discord.access_token)
+    const { lat, lng, title, desc } = req.body
+    const { guildDiscordId } = req.params.guildId
 
-    const pin = await Pin.findOne({
-      where: {
-        userDiscordId: user.id
-      }
-    })
-
-    if (req.file && req.file.buffer) {
+    const checkFile = async () => {
       const { ext } = await FileType.fromBuffer(req.file.buffer)
       const allowedFiletypes = [
         'png',
@@ -60,34 +67,74 @@ router.put('/:guildId',
       ];
 
       if (!allowedFiletypes.includes(ext)) {
-        return res.status(400).json({
-          error: 'Invalid file type for image. Must be jpg/png'
-        })
+        throw new BadFileTypeError()
       }
+
     }
 
-    // user has pin linked, update existing (TODO)
-    if (pin) {
-      return res.sendStatus(204)
+    try {
+
+      const user = await oauth.getUser(req.session.discord.access_token)
+
+      const pin = await Pin.findOne({
+        where: {
+          userDiscordId: user.id
+        }
+      })
+
+      if (req.file && req.file.buffer) {
+        await checkFile()
+      }
+
+      // user has pin linked, update existing (TODO)
+      if (pin) {
+        let imageUrl = pin.imageUrl
+        if (req.file) {
+          // we already checked the file above if it existed, so we're good to upload
+          // push to imgur
+          const imgurResult = await imgurUploader.uploadBuffer(req.file.buffer)
+          if (!imgurResult.success) {
+            throw new ImgurUploadError();
+          }
+          imageUrl = imgurResult.url
+        }
+
+        await pin.update({
+          approved: false,
+          lat,
+          lng,
+          title,
+          desc,
+          imageUrl,
+        })
+
+        return res.json(pin)
+      }
+
+
+      // continue with regular first pin creation...
+      // push image to imgur
+      const imgurResult = await imgurUploader.uploadBuffer(req.file.buffer)
+      if (!imgurResult.success) {
+        return res.json({ error: "Unable to upload to imgur" })
+      }
+
+      const newPin = await Pin.create({
+        lat,
+        lng,
+        title,
+        desc,
+        imageUrl: imgurResult.url,
+        userDiscordId: user.id,
+        guildDiscordId,
+      })
+
+      res.json(newPin)
+
+    } catch (err) {
+      next(err)
     }
 
-    // push image to imgur
-    const imgurResult = await imgurUploader.uploadBuffer(req.file.buffer)
-    if (!imgurResult.success) {
-      return res.json({ error: "Unable to upload to imgur" })
-    }
-
-    const newPin = await Pin.create({
-      lat: req.body.lat,
-      lng: req.body.lng,
-      title: req.body.title,
-      desc: req.body.desc,
-      imageUrl: imgurResult.url,
-      userDiscordId: user.id,
-      guildDiscordId: req.params.guildId,
-    })
-
-    res.json(newPin)
   }
 )
 

@@ -212,12 +212,12 @@ const checkDescriptionErrors = (errors) => {
   }
 }
 
-const checkImageErrors = (errors) => {
+const checkImageErrors = (errors, hasExistingPin) => {
   const file = $("input[name='image']")[0].files[0]
   const MAX_ALLOWED_SIZE = 9 * 1000 * 1000 // 9 MB
-  if (!file) {
+  if (!file && !hasExistingPin) {
     errors.push('You must select an image to be associated with your pin')
-  } else if (file.size > MAX_ALLOWED_SIZE) {
+  } else if (file && file.size > MAX_ALLOWED_SIZE) {
     errors.push('You must select an image smaller than 9 MB')
   }
 }
@@ -229,11 +229,11 @@ const checkCoordErrors = (errors) => {
   }
 }
 
-const findFormErrors = () => {
+const findFormErrors = (hasExistingPin) => {
   const errors = []
   checkTitleErrors(errors)
   checkDescriptionErrors(errors)
-  checkImageErrors(errors)
+  checkImageErrors(errors, hasExistingPin)
   checkCoordErrors(errors)
 
   return errors
@@ -339,7 +339,7 @@ const sendPinData = () => {
       console.log("SUBMITTED")
       e.preventDefault();
 
-      const errors = findFormErrors()
+      const errors = findFormErrors(user.pin !== null)
       if (errors.length > 0) {
         alert(errors.join('\n'))
         return
