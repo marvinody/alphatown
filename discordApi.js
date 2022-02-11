@@ -5,7 +5,7 @@ module.exports = ((clientId, clientSecret) => {
     clientId,
     clientSecret,
     version: 'v9',
-    redirectUri: "http://localhost:3000/auth/discord/callback",
+    redirectUri: "http://localhost:3000/api/auth/discord/callback",
   })
 
   return oauth

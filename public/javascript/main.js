@@ -19,17 +19,19 @@ const updateCoordText = (c) => $('.trigger-coord-select').text(`(${c.lng.toFixed
 const updateDropPinText = (s) => $('.drop-pin span').text(s)
 const updatePinEditTitleText = (s) => $('#pin-edit .title span').text(s)
 
+const sanitizeText = (s) => $('<div>').text(s).html()
+
 const apiPointToMapboxDesc = pt => {
   const pieces = [
-    `<strong>${pt.title}</strong>`
+    `<strong>${sanitizeText(pt.title)}</strong>`
   ]
 
   if (pt.imageUrl) {
-    pieces.push(`<p><a target="_blank" href="${pt.imageUrl}"><img src="${pt.imageUrl}"></a></p>`)
+    pieces.push(`<p><a target="_blank" href="${sanitizeText(pt.imageUrl)}"><img src="${sanitizeText(pt.imageUrl)}"></a></p>`)
   }
 
   if (pt.desc) {
-    pieces.push(`<p>${pt.desc}</p>`)
+    pieces.push(`<p>${sanitizeText(pt.desc)}</p>`)
   }
 
   return pieces.join('')
@@ -101,7 +103,7 @@ const onUp = (e) => {
 map.on('load', async () => {
 
   // guildId comes from global pug template data
-  const { data } = await axios.get(`/pins/${guildId}`);
+  const { data } = await axios.get(`/api/pins/${guildId}`);
   map.addSource('places', apiDataToMapboxFeature(data));
   // Add a layer showing the places.
   map.addLayer({
@@ -250,7 +252,7 @@ const updateFormData = ({
   updateCoordText({ lng, lat })
 }
 
-const sendPinData = () => {
+const sendPinData = async () => {
   const formData = new FormData()
   formData.append('image', $("input[name='image']")[0].files[0])
   formData.append('title', $("input[name='title']").val())
@@ -259,9 +261,20 @@ const sendPinData = () => {
   const [lng, lat] = userCoordFeature.features[0].geometry.coordinates
   formData.append('lng', lng)
   formData.append('lat', lat)
-  axios.put(`/pins/${guildId}`, formData)
+  try {
+    await axios.put(`/api/pins/${guildId}`, formData)
+    updateDropPinText('Pending Pin')
+    alert("Your Pin is now Pending.\nOnce approved by an admin, it'll be public. You can update it if you want until then.")
+  } catch (err) {
+    console.error(err)
+    if(axios.isAxiosError) {
+      alert(err.response.data.message)
+    } else {
+      alert("Something went wrong. Try again later")
+    }
+  }
 
-  updateDropPinText('Pending Pin')
+
 }
 
 const setAvatar = (user) => {
@@ -275,7 +288,7 @@ const setAvatar = (user) => {
     const show = (s) => $(s).removeClass('hide')
     const hide = (s) => $(s).addClass('hide')
 
-    const { data: user } = await axios.get(`/auth/me?guildId=${guildId}`)
+    const { data: user } = await axios.get(`/api/auth/me?guildId=${guildId}`)
     hide('.discord-login')
     show('.drop-pin')
 
@@ -345,7 +358,7 @@ const setAvatar = (user) => {
       show('.drop-pin')
     })
 
-    $('form#pin-edit').submit(e => {
+    $('form#pin-edit').submit(async (e) => {
       console.log("SUBMITTED")
       e.preventDefault();
 
@@ -355,7 +368,9 @@ const setAvatar = (user) => {
         return
       }
 
-      sendPinData()
+      await sendPinData();
+
+      
     })
   } catch (err) {
     console.error(err)

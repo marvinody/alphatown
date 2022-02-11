@@ -7,6 +7,7 @@ const url = oauth.generateAuthUrl({
   scope: ["identify", "guilds"],
 })+"&test_query_param=true";
 
+console.log({url})
 
 router.get('/:guildId', async (req, res, next) => {
   res.render('guildMap', {

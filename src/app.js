@@ -33,11 +33,25 @@ app.use(
 app.use(express.static(path.join(__dirname, '../public')));
 
 app.use('/', indexRouter);
-
-app.use('/users', usersRouter);
-app.use('/auth', authRouter);
-app.use('/pins', pinsRouter);
 app.use('/maps', mapsRouter);
+
+const apiRouter = express.Router()
+
+apiRouter.use('/users', usersRouter);
+apiRouter.use('/auth', authRouter);
+apiRouter.use('/pins', pinsRouter);
+
+apiRouter.use((err, req, res, next) => {
+  console.error(err)
+  console.error(err.stack)
+  const status = err.status || 500
+  res.status(status)
+  res.json('error', {
+    message: err.message || "Unexpected Server Error",
+  });
+})
+
+app.use('/api/', apiRouter)
 
 app.use((err, req, res, next) => {
   console.error(err)
