@@ -17,6 +17,7 @@ const coordinatesDiv = document.getElementById('coordinates');
 const updateCoordText = (c) => $('.trigger-coord-select').text(`(${c.lng.toFixed(3)}, ${c.lat.toFixed(3)}) - Click to change`)
 
 const updateDropPinText = (s) => $('.drop-pin span').text(s)
+const updatePinEditTitleText = (s) => $('#pin-edit .title span').text(s)
 
 const apiPointToMapboxDesc = pt => {
   const pieces = [
@@ -286,8 +287,10 @@ const setAvatar = (user) => {
 
       if (user.pin.approved) {
         updateDropPinText('Update Pin')
+        updatePinEditTitleText('Update Pin (will make it pending again)')
       } else {
         updateDropPinText('Pending Pin')
+        updatePinEditTitleText('Update Pending Pin')
       }
     }
 
