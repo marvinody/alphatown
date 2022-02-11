@@ -47,7 +47,7 @@ router.get('/logout', async (req, res, next) => {
     if(err) {
       return next(err)
     }
-    res.sendStatus(204)
+    res.redirect('/')
   });
 })
 
@@ -65,6 +65,7 @@ router.get('/me', requireDiscordLogin, async (req, res, next) => {
   res.json({
     authed: true,
     pin,
+    id: req.session.discord.id,
     username: req.session.discord.username,
     avatar: req.session.discord.avatar,
   })

@@ -263,6 +263,10 @@ const sendPinData = () => {
   updateDropPinText('Pending Pin')
 }
 
+const setAvatar = (user) => {
+  $('.avatar img').attr('src', `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`)
+}
+
 
 (async () => {
   try {
@@ -273,6 +277,9 @@ const sendPinData = () => {
     const { data: user } = await axios.get('/auth/me')
     hide('.discord-login')
     show('.drop-pin')
+
+    show('.avatar')
+    setAvatar(user)
 
     if (user.pin) {
       updateFormData(user.pin)

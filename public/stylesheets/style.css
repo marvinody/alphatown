@@ -52,6 +52,10 @@ a {
     cursor: pointer;
 }
 
+#pin-edit {
+    z-index: 1;
+}
+
 .modal {
     background-color: grey;
     position: absolute;
@@ -72,7 +76,7 @@ a {
 }
 
 .title-row {
-    display:flex;
+    display: flex;
 }
 
 .title-row .title {
@@ -163,6 +167,38 @@ a {
     color: black;
     font-size: 24px;
 }
+
+.avatar {
+    position: absolute;
+    max-width: 64px;
+    max-height: 64px;
+    left: 0px;
+    bottom: 0px;
+    margin: 0 0 16px 16px;
+    z-index: 0;
+}
+
+.avatar img {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 1px solid black;
+}
+
+.avatar .logout {
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: red;
+    background-color: black;
+    width: 16px;
+    height: 16px;
+    text-align: center;
+    line-height: 1;
+    text-decoration: none;
+    border-radius: 50%;
+   }
+   
 
 @media only screen and (min-width: 768px) {
     .form-row {
