@@ -5,7 +5,7 @@ const map = new mapboxgl.Map({
   container: 'map',
   style: 'mapbox://styles/mapbox/streets-v11',
   center: [-77.04, 38.907],
-  zoom: 11.15,
+  zoom: 0,
   maxZoom: 12,
   logoPosition: 'bottom-right'
 });
@@ -275,7 +275,7 @@ const setAvatar = (user) => {
     const show = (s) => $(s).removeClass('hide')
     const hide = (s) => $(s).addClass('hide')
 
-    const { data: user } = await axios.get('/auth/me')
+    const { data: user } = await axios.get(`/auth/me?guildId=${guildId}`)
     hide('.discord-login')
     show('.drop-pin')
 

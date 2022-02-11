@@ -5,7 +5,7 @@ var router = express.Router();
 const FileType = require('file-type');
 
 const oauth = require('../../discordApi')
-const { Pin } = require('../db/models')
+const { Pin, Guild } = require('../db/models')
 const { requireDiscordLogin, requireDiscordGuild } = require('../middleware')
 
 
@@ -57,7 +57,8 @@ router.put('/:guildId',
   async (req, res, next) => {
 
     const { lat, lng, title, desc } = req.body
-    const { guildDiscordId } = req.params.guildId
+    const guildDiscordId = req.params.guildId
+
 
     const checkFile = async () => {
       const { ext } = await FileType.fromBuffer(req.file.buffer)
@@ -74,11 +75,11 @@ router.put('/:guildId',
 
     try {
 
-      const user = await oauth.getUser(req.session.discord.access_token)
+      await Guild.throwErrorIfBadGuild(guildDiscordId)
 
       const pin = await Pin.findOne({
         where: {
-          userDiscordId: user.id
+          userDiscordId: req.session.discord.id
         }
       })
 
@@ -125,7 +126,7 @@ router.put('/:guildId',
         title,
         desc,
         imageUrl: imgurResult.url,
-        userDiscordId: user.id,
+        userDiscordId: req.session.discord.id,
         guildDiscordId,
       })
 

@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const oauth = require('../../discordApi')
-const { User, Pin } = require('../db/models')
+const { User, Pin, Guild } = require('../db/models')
 const { requireDiscordLogin } = require('../middleware')
 
 router.get('/discord/callback', async function (req, res, next) {
@@ -52,15 +52,22 @@ router.get('/logout', async (req, res, next) => {
 })
 
 router.get('/me', requireDiscordLogin, async (req, res, next) => {
-
-  const pin = await Pin.findOne({
-    include: {
-      model: User,
-      where: {
-        discordId: req.session.discord.id,
-      }
-    }
-  })
+  let pin = null
+  if(req.query.guildId) {
+    pin = await Pin.findOne({
+      include:[ {
+        model: User,
+        where: {
+          discordId: req.session.discord.id,
+        }
+      }, {
+        model: Guild,
+        where: {
+          discordId: req.query.guildId,
+        }
+      }]
+    })
+  }
 
   res.json({
     authed: true,
