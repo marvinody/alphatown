@@ -35,7 +35,7 @@ router.get('/discord/callback', async function (req, res, next) {
       res.redirect('/')
       return
     } catch (err) {
-      res.send('error')
+      next(err)
     }
   } else {
     res.send('no code');
@@ -44,7 +44,7 @@ router.get('/discord/callback', async function (req, res, next) {
 
 router.get('/logout', async (req, res, next) => {
   req.session.destroy((err) => {
-    if(err) {
+    if (err) {
       return next(err)
     }
     res.redirect('/')
@@ -53,9 +53,9 @@ router.get('/logout', async (req, res, next) => {
 
 router.get('/me', requireDiscordLogin, async (req, res, next) => {
   let pin = null
-  if(req.query.guildId) {
+  if (req.query.guildId) {
     pin = await Pin.findOne({
-      include:[ {
+      include: [{
         model: User,
         where: {
           discordId: req.session.discord.id,

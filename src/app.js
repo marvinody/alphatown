@@ -43,10 +43,8 @@ apiRouter.use('/pins', pinsRouter);
 
 apiRouter.use((err, req, res, next) => {
   console.error(err)
-  console.error(err.stack)
   const status = err.status || 500
-  res.status(status)
-  res.json('error', {
+  res.status(status).json({
     message: err.message || "Unexpected Server Error",
   });
 })
@@ -55,7 +53,6 @@ app.use('/api/', apiRouter)
 
 app.use((err, req, res, next) => {
   console.error(err)
-  console.error(err.stack)
   const status = err.status || 500
   res.status(status)
   res.render('error', {

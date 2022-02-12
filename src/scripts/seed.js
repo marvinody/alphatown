@@ -21,8 +21,8 @@ const { Pin, Guild, User } = require('../db/models');
 
   await Promise.all([
     Pin.create({
-      lat: -77.038659,
-      lng: 38.931567,
+      lng: -77.038659,
+      lat: 38.931567,
       approved: false,
       title: 'Lad Protects Mariss Here (not approved)',
       desc: 'Also some other buns here',
@@ -31,8 +31,8 @@ const { Pin, Guild, User } = require('../db/models');
       userDiscordId: 'user1',
     }),
     Pin.create({
-      lat: -77.039659,
-      lng: 38.931567,
+      lng: -77.039659,
+      lat: 38.931567,
       approved: true,
       title: 'Lad Protects Mariss Here 1 (approved)',
       desc: 'Also some other buns here',
@@ -41,8 +41,8 @@ const { Pin, Guild, User } = require('../db/models');
       userDiscordId: 'user2',
     }),
     Pin.create({
-      lat: -77.037659,
-      lng: 38.931567,
+      lng: -77.037659,
+      lat: 38.931567,
       approved: true,
       title: 'Lad Protects Mariss Here 2 (approved)',
       desc: 'Also some other buns here',

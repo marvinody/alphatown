@@ -6,6 +6,10 @@ const User = db.define('user', {
     type: Sequelize.STRING,
     primaryKey: true,
   },
+  isAdmin: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: false,
+  }
 })
 
 module.exports = User

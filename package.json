@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "dev": "nodemon -e js,pug -w src -w views"
+    "dev": "nodemon -e js,pug -w src -w views",
+    "seed": "node src/scripts/seed"
   },
   "dependencies": {
     "connect-session-sequelize": "^7.1.2",
