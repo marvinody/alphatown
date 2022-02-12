@@ -52,4 +52,5 @@ const requireAdmin = async (req, res, next) => {
 module.exports = {
   requireDiscordLogin,
   requireDiscordGuild,
+  requireAdmin,
 }

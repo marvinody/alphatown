@@ -4,11 +4,11 @@ const db = require('../db')
 const Pin = db.define('pin', {
 
   lat: {
-    type:Sequelize.FLOAT,
+    type: Sequelize.FLOAT,
     allowNull: false,
   },
   lng: {
-    type:Sequelize.FLOAT,
+    type: Sequelize.FLOAT,
     allowNull: false,
   },
   approved: {
@@ -29,19 +29,30 @@ const Pin = db.define('pin', {
   },
   imageUrl: {
     allowNull: true,
-    type:Sequelize.STRING,
+    type: Sequelize.STRING,
     validator: {
       isUrl: true,
     }
   }
 })
 
-Pin.findAllPublic = async function(guildDiscordId) {
+Pin.findAllPublic = async function (guildDiscordId) {
   return this.findAll({
     where: {
       approved: true,
       guildDiscordId,
     },
+    attributes: 'lat lng title desc imageUrl createdAt updatedAt'.split(' ')
+  })
+}
+
+Pin.findAllPending = async function (guildDiscordId) {
+  return this.findAll({
+    where: {
+      approved: false,
+      guildDiscordId,
+    },
+    include: 'user',
     attributes: 'lat lng title desc imageUrl createdAt updatedAt'.split(' ')
   })
 }

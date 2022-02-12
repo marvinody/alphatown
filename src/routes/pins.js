@@ -6,14 +6,19 @@ const FileType = require('file-type');
 
 const oauth = require('../../discordApi')
 const { Pin, Guild } = require('../db/models')
-const { requireDiscordLogin, requireDiscordGuild } = require('../middleware')
+const { requireDiscordLogin, requireDiscordGuild, requireAdmin, } = require('../middleware')
 
 router.get('/:guildId', async (req, res, next) => {
-
   const pins = await Pin.findAllPublic(req.params.guildId)
 
   res.json(pins)
+})
 
+// do not require guild since admin for all site
+router.get('/admin/:guildId', requireDiscordLogin, requireAdmin, async (req, res, next) => {
+  const pins = await Pin.findAllPending(req.params.guildId)
+
+  res.json(pins)
 })
 
 class BadFileTypeError extends Error {
@@ -138,5 +143,7 @@ router.get('/belongs-to/:guildId',
       member: true,
     })
   })
+
+
 
 module.exports = router;
