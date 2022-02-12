@@ -21,6 +21,10 @@ const updatePinEditTitleText = (s) => $('#pin-edit .title span').text(s)
 
 const sanitizeText = (s) => $('<div>').text(s).html()
 
+const approvePin = async (id) => {
+  await axios.post(`/api/pins/admin/${guildId}/${id}/approve`)
+}
+
 const apiPointToMapboxDesc = pt => {
   const pieces = [
     `<strong>${sanitizeText(pt.title)}</strong>`
@@ -34,10 +38,17 @@ const apiPointToMapboxDesc = pt => {
     pieces.push(`<p>${sanitizeText(pt.desc)}</p>`)
   }
 
+  if (pt.approved === false) {
+    // jank, need to change this later and iterate over dataset to change it on ui
+    // similar to other drag system for drop pin
+    pieces.push(`<button onclick="approvePin(${pt.id})">Approve</button>`)
+    pieces.push(`<p>UserId:${pt.user.discordId}</p>`)
+  }
+
   return pieces.join('')
 }
 
-const apiDataToMapboxFeature = data => {
+const apiDataToMapboxFeature = (data, icon) => {
   return {
     type: 'geojson',
     data: {
@@ -46,7 +57,7 @@ const apiDataToMapboxFeature = data => {
         type: 'Feature',
         properties: {
           description: apiPointToMapboxDesc(pt),
-          icon: 'bar-15',
+          icon,
         },
         geometry: {
           type: 'Point',
@@ -55,6 +66,49 @@ const apiDataToMapboxFeature = data => {
       }))
     }
   }
+}
+
+const createMapLayerWithPins = (layerName, pins, icon = 'bar-15') => {
+  map.addSource(layerName, apiDataToMapboxFeature(pins, icon));
+  map.addLayer({
+    'id': layerName,
+    'type': 'symbol',
+    'source': layerName,
+    'layout': {
+      'icon-image': '{icon}',
+      'icon-allow-overlap': true
+    }
+  });
+
+  // When a click event occurs on a feature in the places layer, open a popup at the
+  // location of the feature, with description HTML from its properties.
+  map.on('click', layerName, (e) => {
+    // Copy coordinates array.
+    const coordinates = e.features[0].geometry.coordinates.slice();
+    const description = e.features[0].properties.description;
+
+    // Ensure that if the map is zoomed out such that multiple
+    // copies of the feature are visible, the popup appears
+    // over the copy being pointed to.
+    while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+      coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+    }
+
+    new mapboxgl.Popup()
+      .setLngLat(coordinates)
+      .setHTML(description)
+      .addTo(map);
+  });
+
+  // Change the cursor to a pointer when the mouse is over the places layer.
+  map.on('mouseenter', layerName, () => {
+    map.getCanvas().style.cursor = 'pointer';
+  });
+
+  // Change it back to a pointer when it leaves.
+  map.on('mouseleave', layerName, () => {
+    map.getCanvas().style.cursor = '';
+  });
 }
 
 
@@ -104,47 +158,8 @@ map.on('load', async () => {
 
   // guildId comes from global pug template data
   const { data } = await axios.get(`/api/pins/${guildId}`);
-  map.addSource('places', apiDataToMapboxFeature(data));
-  // Add a layer showing the places.
-  map.addLayer({
-    'id': 'places',
-    'type': 'symbol',
-    'source': 'places',
-    'layout': {
-      'icon-image': '{icon}',
-      'icon-allow-overlap': true
-    }
-  });
-
-  // When a click event occurs on a feature in the places layer, open a popup at the
-  // location of the feature, with description HTML from its properties.
-  map.on('click', 'places', (e) => {
-    // Copy coordinates array.
-    const coordinates = e.features[0].geometry.coordinates.slice();
-    const description = e.features[0].properties.description;
-
-    // Ensure that if the map is zoomed out such that multiple
-    // copies of the feature are visible, the popup appears
-    // over the copy being pointed to.
-    while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-      coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-    }
-
-    new mapboxgl.Popup()
-      .setLngLat(coordinates)
-      .setHTML(description)
-      .addTo(map);
-  });
-
-  // Change the cursor to a pointer when the mouse is over the places layer.
-  map.on('mouseenter', 'places', () => {
-    map.getCanvas().style.cursor = 'pointer';
-  });
-
-  // Change it back to a pointer when it leaves.
-  map.on('mouseleave', 'places', () => {
-    map.getCanvas().style.cursor = '';
-  });
+  // populate map with approved pins
+  createMapLayerWithPins('approvedPins', data)
 
   // Add a single point to the map.
   map.addSource('point', {
@@ -267,7 +282,7 @@ const sendPinData = async () => {
     alert("Your Pin is now Pending.\nOnce approved by an admin, it'll be public. You can update it if you want until then.")
   } catch (err) {
     console.error(err)
-    if(axios.isAxiosError) {
+    if (axios.isAxiosError) {
       alert(err.response.data.message)
     } else {
       alert("Something went wrong. Try again later")
@@ -282,6 +297,12 @@ const setAvatar = (user) => {
 }
 
 
+const showPendingPins = async () => {
+  const { data: pins } = await axios.get(`/api/pins/admin/${guildId}`)
+  createMapLayerWithPins('pendingPins', pins, 'bar-15')
+}
+
+
 (async () => {
   try {
 
@@ -290,7 +311,7 @@ const setAvatar = (user) => {
 
     const { data: user } = await axios.get(`/api/auth/me?guildId=${guildId}`)
     hide('.discord-login')
-    show('.drop-pin')
+    show('.login-actions')
 
     show('.avatar')
     setAvatar(user)
@@ -307,12 +328,16 @@ const setAvatar = (user) => {
       }
     }
 
-    // close #pin-edit ui, show .drop-pin
+    if (user.isAdmin) {
+      show('.show-pending')
+    }
+
+    // close #pin-edit ui, show .login-actions
     $('.trigger-coord-select').click(() => {
       alert("Do not select your actual address, pick a general place.")
       hide('#pin-edit')
-      // we don't show the drop-pin part because we want to only let user choose loc
-      // show('.drop-pin')
+      // we don't show the login-actions part because we want to only let user choose loc
+      // show('.login-actions')
       // next click, set coords of location & display
       map.once('click', (e) => {
         const coords = e.lngLat
@@ -337,7 +362,7 @@ const setAvatar = (user) => {
 
     $('.drop-pin').click(() => {
       show('#pin-edit')
-      hide('.drop-pin')
+      hide('.login-actions')
 
       if (user.pin && !user.pin.approved) {
         if (user.pin.approved) {
@@ -355,7 +380,7 @@ const setAvatar = (user) => {
 
     $('#pin-edit .close-button span').click(() => {
       hide('#pin-edit')
-      show('.drop-pin')
+      show('.login-actions')
     })
 
     $('form#pin-edit').submit(async (e) => {
@@ -370,7 +395,15 @@ const setAvatar = (user) => {
 
       await sendPinData();
 
-      
+
+    })
+
+    $('.show-pending').click(async () => {
+      hide('.show-pending')
+      // hide current layer
+      map.setLayoutProperty('approvedPins', 'visibility', 'none')
+      await showPendingPins();
+
     })
   } catch (err) {
     console.error(err)

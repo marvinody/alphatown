@@ -53,7 +53,7 @@ Pin.findAllPending = async function (guildDiscordId) {
       guildDiscordId,
     },
     include: 'user',
-    attributes: 'id lat lng title desc imageUrl createdAt updatedAt'.split(' ')
+    attributes: 'id lat lng title desc imageUrl approved createdAt updatedAt'.split(' ')
   })
 }
 

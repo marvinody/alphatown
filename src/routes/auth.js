@@ -69,12 +69,15 @@ router.get('/me', requireDiscordLogin, async (req, res, next) => {
     })
   }
 
+  const user = await User.findByPk(req.session.discord.id)
+
   res.json({
     authed: true,
     pin,
     id: req.session.discord.id,
     username: req.session.discord.username,
     avatar: req.session.discord.avatar,
+    isAdmin: user.isAdmin
   })
 })
 

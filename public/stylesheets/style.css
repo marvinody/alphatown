@@ -24,12 +24,16 @@ a {
 }
 
 .action-corner {
+    position: absolute;
+}
+
+.actionable {
     font-size: 1.5rem;
     padding: 8px;
     margin: 0;
+    margin-bottom: 16px;
     border-radius: 8px;
     background-color: white;
-    position: absolute;
     outline: 1px solid black;
 }
 
@@ -48,9 +52,15 @@ a {
     margin-right: 16px;
 }
 
-.drop-pin {
+.actionable {
     cursor: pointer;
 }
+
+.login-actions {
+    display: flex;
+    flex-direction: column;
+}
+
 
 #pin-edit {
     z-index: 3;
@@ -73,6 +83,7 @@ a {
     border: 4px solid #111;
     border-radius: 4px;
     color: #eee;
+    margin-top: 24px;
 }
 
 .title-row {
@@ -197,8 +208,8 @@ a {
     line-height: 1;
     text-decoration: none;
     border-radius: 50%;
-   }
-   
+}
+
 
 @media only screen and (min-width: 768px) {
     .form-row {

@@ -16,10 +16,11 @@ html
 
     )
     div.discord-login.action-corner.top.left
-      a(href=oauth_url) Login with Discord
+      a.actionable(href=oauth_url) Login with Discord
 
-    div.drop-pin.hide.action-corner.top.right
-      span Drop your Pin
+    div.hide.login-actions.action-corner.top.right
+      span.actionable.drop-pin Drop your Pin
+      span.actionable.show-pending.hide Show Pending 
 
     form.modal#pin-edit.hide.form-group
       div.title-row
