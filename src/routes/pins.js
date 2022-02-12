@@ -21,6 +21,23 @@ router.get('/admin/:guildId', requireDiscordLogin, requireAdmin, async (req, res
   res.json(pins)
 })
 
+// do not require guild since admin for all site
+router.post('/admin/:guildId/:pinId/approve', requireDiscordLogin, requireAdmin, async (req, res, next) => {
+  try {
+    await Pin.update({
+      approved: true,
+    }, {
+      where: {
+        id: req.params.pinId,
+        guildDiscordId: req.params.guildId,
+      }
+    })
+    res.status(204).end()
+  } catch (err) {
+    next(err)
+  }
+})
+
 class BadFileTypeError extends Error {
   constructor() {
     super('Invalid file type for image. Must be jpg/png')
