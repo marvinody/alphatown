@@ -7,6 +7,10 @@
     "dev": "nodemon -e js,pug -w src -w views",
     "seed": "node src/scripts/seed"
   },
+  "engines": {
+    "npm": ">=7.0.0",
+    "node": ">=17.0.0"
+  },
   "dependencies": {
     "connect-session-sequelize": "^7.1.2",
     "cookie-parser": "~1.4.4",
