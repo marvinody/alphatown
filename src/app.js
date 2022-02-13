@@ -4,6 +4,7 @@ const session = require('express-session')
 const SequelizeStore = require('connect-session-sequelize')(session.Store)
 const db = require('./db')
 const sessionStore = new SequelizeStore({ db })
+sessionStore.sync()
 
 var logger = require('morgan');
 
@@ -56,7 +57,7 @@ app.use((err, req, res, next) => {
   const status = err.status || 500
   res.status(status)
   res.render('error', {
-    title: `${status} Error`, 
+    title: `${status} Error`,
     message: err.message || "Unexpected Server Error",
   });
 })
