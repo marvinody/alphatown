@@ -1,12 +1,15 @@
 html
-
+  include includes/styles.pug
   head
-    title='Hierophant'
+    title='Alphatown'
     script(
       src='/javascript/main.js'
       defer
     )
-  body
-    h1='Hierophant'
+  body#homepage
+    h1='Alphatown'
     h2='A site to integrate maps with discord'
     h3='Currently only serving specific communities'
+    ul 
+      li
+        a(href='/maps/257310633211461633') Fumo
