@@ -16,7 +16,7 @@ const coordinatesDiv = document.getElementById('coordinates');
 
 const updateCoordText = (c) => $('.trigger-coord-select').text(`(${c.lng.toFixed(3)}, ${c.lat.toFixed(3)}) - Click to change`)
 
-const updateDropPinText = (s) => $('.drop-pin span').text(s)
+const updateDropPinText = (s) => $('.drop-pin').text(s)
 const updatePinEditTitleText = (s) => $('#pin-edit .title span').text(s)
 
 const sanitizeText = (s) => $('<div>').text(s).html()
@@ -315,6 +315,8 @@ const showPendingPins = async () => {
 
     show('.avatar')
     setAvatar(user)
+
+    console.log({ user })
 
     if (user.pin) {
       updateFormData(user.pin)
