@@ -76,7 +76,8 @@ const createMapLayerWithPins = (layerName, pins, icon = 'bar-15') => {
     'source': layerName,
     'layout': {
       'icon-image': '{icon}',
-      'icon-allow-overlap': true
+      'icon-allow-overlap': true,
+      'icon-size': 0.15,
     }
   });
 
@@ -158,8 +159,18 @@ map.on('load', async () => {
 
   // guildId comes from global pug template data
   const { data } = await axios.get(`/api/pins/${guildId}`);
+
+  map.loadImage(
+    '/images/shion.png',
+    (error, image) => {
+      if (error) throw error;
+
+      // Add the image to the map style.
+      map.addImage('shion', image);
+      createMapLayerWithPins('approvedPins', data, 'shion')
+    }
+  )
   // populate map with approved pins
-  createMapLayerWithPins('approvedPins', data)
 
   // Add a single point to the map.
   map.addSource('point', {
