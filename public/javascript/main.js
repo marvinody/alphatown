@@ -1,6 +1,5 @@
 mapboxgl.accessToken = 'pk.eyJ1IjoibWFydmlub2R5IiwiYSI6ImNqdjJqMHQ0NDBjOGc0M2w4cjZ3NThveXIifQ.O6h9z8qT-FLrinnnqFqmBg';
 
-
 const map = new mapboxgl.Map({
   container: 'map',
   style: 'mapbox://styles/mapbox/streets-v11',
@@ -14,7 +13,7 @@ const canvas = map.getCanvasContainer();
 
 const coordinatesDiv = document.getElementById('coordinates');
 
-const updateCoordText = (c) => $('.trigger-coord-select').text(`(${c.lng.toFixed(3)}, ${c.lat.toFixed(3)}) - Click to change`)
+const updateCoordText = (c) => $('.trigger-coord-select').text($.i18n('alphatown-pinedit-location-display', c.lng.toFixed(3), c.lat.toFixed(3)))
 
 const updateDropPinText = (s) => $('.drop-pin').text(s)
 const updatePinEditTitleText = (s) => $('#pin-edit .title span').text(s)
@@ -228,16 +227,16 @@ map.on('load', async () => {
 const checkTitleErrors = (errors) => {
   const title = $("input[name='title']").val()
   if (title.length === 0) {
-    errors.push('You must give a title.')
+    errors.push($.i18n('alphatown-pinedit-title-none'))
   } else if (title.length > 80) {
-    errors.push('Your title is too long. 80 chars max')
+    errors.push($.i18n('alphatown-pinedit-title-long'))
   }
 }
 
 const checkDescriptionErrors = (errors) => {
   const desc = $("textarea[name='desc']").val()
   if (desc.length > 160) {
-    errors.push('Your desc is too long. 160 chars max')
+    errors.push($.i18n('alphatown-pinedit-desc-long'))
   }
 }
 
@@ -245,16 +244,16 @@ const checkImageErrors = (errors, hasExistingPin) => {
   const file = $("input[name='image']")[0].files[0]
   const MAX_ALLOWED_SIZE = 9 * 1000 * 1000 // 9 MB
   if (!file && !hasExistingPin) {
-    errors.push('You must select an image to be associated with your pin')
+    errors.push($.i18n('alphatown-pinedit-image-none'))
   } else if (file && file.size > MAX_ALLOWED_SIZE) {
-    errors.push('You must select an image smaller than 9 MB')
+    errors.push($.i18n('alphatown-pinedit-image-large'))
   }
 }
 
 const checkCoordErrors = (errors) => {
   const coords = userCoordFeature.features[0].geometry.coordinates
   if (coords[0] === 0 && coords[1] === 0) {
-    errors.push("You must select a location for your pin")
+    errors.push($.i18n('alphatown-pinedit-location-none'))
   }
 }
 
@@ -289,14 +288,14 @@ const sendPinData = async () => {
   formData.append('lat', lat)
   try {
     await axios.put(`/api/pins/${guildId}`, formData)
-    updateDropPinText('Pending Pin')
-    alert("Your Pin is now Pending.\nOnce approved by an admin, it'll be public. You can update it if you want until then.")
+    updateDropPinText($.i18n('alphatown-droppin-title-pending'))
+    alert($.i18n('alphatown-pinedit-submit'))
   } catch (err) {
     console.error(err)
     if (axios.isAxiosError) {
       alert(err.response.data.message)
     } else {
-      alert("Something went wrong. Try again later")
+      alert($.i18n('alphatown-genericerror'))
     }
   }
 
@@ -316,6 +315,8 @@ const showPendingPins = async () => {
 
 (async () => {
   try {
+    // make sure this is loaded before doing any shit
+    await i18nLoaded
 
     const show = (s) => $(s).removeClass('hide')
     const hide = (s) => $(s).addClass('hide')
@@ -333,11 +334,11 @@ const showPendingPins = async () => {
       updateFormData(user.pin)
 
       if (user.pin.approved) {
-        updateDropPinText('Update Pin')
-        updatePinEditTitleText('Update Pin (will make it pending again)')
+        updateDropPinText($.i18n('alphatown-droppin-title-approved'))
+        updatePinEditTitleText($.i18n('alphatown-pinedit-title-update-approved'))
       } else {
-        updateDropPinText('Pending Pin')
-        updatePinEditTitleText('Update Pending Pin')
+        updateDropPinText($.ii8n('alphatown-droppin-title-pending'))
+        updatePinEditTitleText($.i18n('alphatown-pinedit-title-update-pending'))
       }
     }
 
@@ -347,7 +348,7 @@ const showPendingPins = async () => {
 
     // close #pin-edit ui, show .login-actions
     $('.trigger-coord-select').click(() => {
-      alert("Do not select your actual address, pick a general place.")
+      alert($.i18n('alphatown-pinedit-location-addresswarn'))
       hide('#pin-edit')
       // we don't show the login-actions part because we want to only let user choose loc
       // show('.login-actions')

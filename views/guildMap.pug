@@ -1,6 +1,8 @@
 html
   include includes/mapbox.pug
   include includes/styles.pug
+  include includes/i18n.pug
+
   head
     title= title
 
@@ -11,26 +13,26 @@ html
       defer
     )
   body
-    h1= message
     div#map(
 
     )
     div.discord-login.action-corner.top.left
-      a.actionable(href=oauth_url) Login with Discord
+      a.actionable(href=oauth_url,data-i18n='alphatown-discordlogin') Login with Discord
 
     div.hide.login-actions.action-corner.top.right
-      span.actionable.drop-pin Drop your Pin
-      span.actionable.show-pending.hide Show Pending 
+      span.actionable.drop-pin(data-i18n='alphatown-droppin-title-create') Drop your Pin
+      span.actionable.show-pending.hide(data-i18n='alphatown-showpendingpins') Show Pending 
 
     form.modal#pin-edit.hide.form-group
       div.title-row
         div.title
-          span Creating Pin
+          span(data-i18n='alphatown-pinedit-title-create') Creating Pin
         div.close-button
           span X
       div.form-row
         label(
           for='title'
+          data-i18n='alphatown-pinedit-title-display'
         ) Title* (80)
         div.input-container
           input(
@@ -42,6 +44,7 @@ html
       div.form-row
         label(
           for='desc'
+          data-i18n='alphatown-pinedit-desc-display'
         ) Description (160)
         div.input-container
           textarea(
@@ -54,6 +57,7 @@ html
       div.form-row
         label(
           for='image'
+          data-i18n='alphatown-pinedit-image-display'
         ) Image*
         div.input-container
           input(
@@ -64,10 +68,14 @@ html
           )
       
       div.form-row.center
-        span.trigger-coord-select Click to choose location
+        span.trigger-coord-select(
+          data-i18n='alphatown-pinedit-location-default-display'
+        ) Click to choose location
 
       div.form-row.right
-        button.submit-pin Submit
+        button.submit-pin(
+          data-i18n='alphatown-pinedit-submit-display'
+        ) Submit
 
     div.avatar.hide
       img
