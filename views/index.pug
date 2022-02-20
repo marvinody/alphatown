@@ -2,14 +2,22 @@ html
   include includes/styles.pug
   head
     title='Alphatown'
-    script(
-      src='/javascript/main.js'
-      defer
-    )
-  body#homepage
-    h1='Alphatown'
-    h2='A site to integrate maps with discord'
-    h3='Currently only serving specific communities'
-    ul 
-      li
-        a(href='/maps/257310633211461633') Fumo
+  body
+    div#container
+      div#homepage
+        h1='Alphatown'
+        h2(
+          data-i18n='alphatown-index-header'
+        ) A site to integrate maps with discord
+        p(
+          data-i18n='alphatown-index-desc-process-1'
+        ) Drop a marker near a location, add a title & image and share it with others.
+        p(
+          data-i18n='alphatown-index-desc-process-1'
+        ) All markers must be approved by a moderator before shown to other people
+        p(
+          data-i18n='alphatown-index-desc-supporting'
+        ) Currently only supporting limited communities, ask if you feel like your's should be included
+        ul 
+          li
+            a(href='/maps/257310633211461633') Fumo
