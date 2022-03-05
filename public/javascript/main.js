@@ -2,12 +2,22 @@ mapboxgl.accessToken = 'pk.eyJ1IjoibWFydmlub2R5IiwiYSI6ImNqdjJqMHQ0NDBjOGc0M2w4c
 
 const map = new mapboxgl.Map({
   container: 'map',
-  style: 'mapbox://styles/mapbox/streets-v11',
+  style: 'mapbox://styles/mapbox/dark-v10',
   center: [-77.04, 38.907],
   zoom: 0,
   maxZoom: 12,
   logoPosition: 'bottom-right'
 });
+
+const getNavigatorLanguage = () => {
+  if (navigator.languages && navigator.languages.length) {
+    return navigator.languages[0];
+  } else {
+    return navigator.userLanguage || navigator.language || navigator.browserLanguage || 'en';
+  }
+}
+
+
 
 const canvas = map.getCanvasContainer();
 
@@ -155,6 +165,11 @@ const onUp = (e) => {
 
 
 map.on('load', async () => {
+
+  map.setLayoutProperty('country-label', 'text-field', [
+    'get',
+    `name_${getNavigatorLanguage()}`
+  ])
 
   // guildId comes from global pug template data
   const { data } = await axios.get(`/api/pins/${guildId}`);
@@ -337,7 +352,7 @@ const showPendingPins = async () => {
         updateDropPinText($.i18n('alphatown-droppin-title-approved'))
         updatePinEditTitleText($.i18n('alphatown-pinedit-title-update-approved'))
       } else {
-        updateDropPinText($.ii8n('alphatown-droppin-title-pending'))
+        updateDropPinText($.i18n('alphatown-droppin-title-pending'))
         updatePinEditTitleText($.i18n('alphatown-pinedit-title-update-pending'))
       }
     }
