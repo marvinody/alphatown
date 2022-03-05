@@ -2,7 +2,7 @@ mapboxgl.accessToken = 'pk.eyJ1IjoibWFydmlub2R5IiwiYSI6ImNqdjJqMHQ0NDBjOGc0M2w4c
 
 const map = new mapboxgl.Map({
   container: 'map',
-  style: 'mapbox://styles/mapbox/dark-v10',
+  style: 'mapbox://styles/marvinody/cl0e912qa001l16pakwj7435v',
   center: [-77.04, 38.907],
   zoom: 0,
   maxZoom: 12,
@@ -15,6 +15,16 @@ const getNavigatorLanguage = () => {
   } else {
     return navigator.userLanguage || navigator.language || navigator.browserLanguage || 'en';
   }
+}
+
+const getLanguage = () => {
+  // this may return a format like "en-US" or just "en"
+  const navLang = getNavigatorLanguage()
+
+  // but we want just the "en" part and instead of parsing ourselves, let's use this
+  const locale = new Intl.Locale(navLang);
+  // if no lang detected for w/e reason, let's default to en
+  return locale.language || 'en'
 }
 
 
@@ -163,13 +173,34 @@ const onUp = (e) => {
   map.off('touchmove', onMove);
 }
 
+// dependent on style of map, not all support these layout properties...
+const changeMapLang = (lang) => {
+  map.setLayoutProperty('country-label', 'text-field', [
+    'get',
+    `name_${lang}`
+  ])
+  map.setLayoutProperty('state-label', 'text-field', [
+    'get',
+    `name_${lang}`
+  ])
+  map.setLayoutProperty('settlement-major-label', 'text-field', [
+    'get',
+    `name_${lang}`
+  ])
+  map.setLayoutProperty('settlement-minor-label', 'text-field', [
+    'get',
+    `name_${lang}`
+  ])
+  map.setLayoutProperty('settlement-subdivision-label', 'text-field', [
+    'get',
+    `name_${lang}`
+  ])
+}
+
 
 map.on('load', async () => {
 
-  map.setLayoutProperty('country-label', 'text-field', [
-    'get',
-    `name_${getNavigatorLanguage()}`
-  ])
+  changeMapLang(getLanguage())
 
   // guildId comes from global pug template data
   const { data } = await axios.get(`/api/pins/${guildId}`);
