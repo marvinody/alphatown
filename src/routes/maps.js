@@ -9,6 +9,7 @@ const url = oauth.generateAuthUrl({
 
 console.log({ url })
 
+
 router.get('/:guildId', async (req, res, next) => {
 
   const guild = await Guild.findByPk(req.params.guildId)
@@ -21,7 +22,7 @@ router.get('/:guildId', async (req, res, next) => {
   }
 
   res.render('guildMap', {
-    title: "Alphatown",
+    title: "Alphatown | Discord Map",
     guildId: req.params.guildId,
     oauth_url: url,
   })

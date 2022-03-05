@@ -9,8 +9,7 @@ const url = oauth.generateAuthUrl({
 /* GET home page. */
 router.get('/', function (req, res, next) {
   res.render('index', {
-    title: 'Express', 
-    message: "yo watuppp",
+    title: 'Alphatown | Discord Map',
     oauth: url,
   });
 });
