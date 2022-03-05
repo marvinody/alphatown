@@ -1,5 +1,7 @@
 html
   include includes/styles.pug
+  include includes/jquery.pug
+  include includes/i18n.pug
   include includes/genericDiscordEmbed.pug
   head
     title= title
@@ -14,11 +16,11 @@ html
           data-i18n='alphatown-index-desc-process-1'
         ) Drop a marker near a location, add a title & image and share it with others.
         p(
-          data-i18n='alphatown-index-desc-process-1'
+          data-i18n='alphatown-index-desc-process-2'
         ) All markers must be approved by a moderator before shown to other people
         p(
           data-i18n='alphatown-index-desc-supporting'
-        ) Currently only supporting limited communities, ask if you feel like your's should be included
+        ) Currently only supporting limited communities, ask if you feel like yours should be included
         ul 
           li
             a(href='/maps/257310633211461633') Fumo
