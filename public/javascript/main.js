@@ -4,10 +4,32 @@ const map = new mapboxgl.Map({
   container: 'map',
   style: 'mapbox://styles/marvinody/cl0e912qa001l16pakwj7435v',
   center: [-77.04, 38.907],
-  zoom: 0,
+  zoom: 1,
   maxZoom: 12,
   logoPosition: 'bottom-right'
 });
+
+const show = (s) => $(s).removeClass('hide')
+const hide = (s) => $(s).addClass('hide')
+
+const jqueryAlert = ({ title = '', message, onCloseCallback = () => { } }) => {
+  $("<div></div>").text(message).dialog({
+    modal: true,
+    resizable: false,
+    title: title,
+    position: { my: "center", at: "center", of: window },
+    buttons: {
+      [$.i18n('alphatown-general-ok')]: function () {
+        $(this).dialog('close');
+      }
+    },
+    close: function () {
+      onCloseCallback();
+      /* Cleanup node(s) from DOM */
+      $(this).dialog('destroy').remove();
+    }
+  });
+}
 
 const getNavigatorLanguage = () => {
   if (navigator.languages && navigator.languages.length) {
@@ -335,14 +357,25 @@ const sendPinData = async () => {
   try {
     await axios.put(`/api/pins/${guildId}`, formData)
     updateDropPinText($.i18n('alphatown-droppin-title-pending'))
-    alert($.i18n('alphatown-pinedit-submit'))
+    jqueryAlert({
+      title: $.i18n('alphatown-alert-notice'),
+      message: $.i18n('alphatown-pinedit-submit'),
+      onCloseCallback: () => {
+        hide('#pin-edit')
+        show('.login-actions')
+
+      }
+    })
   } catch (err) {
     console.error(err)
     if (axios.isAxiosError) {
-      alert(err.response.data.message)
-    } else {
-      alert($.i18n('alphatown-genericerror'))
+      console.error(err.response.data.message)
     }
+
+    jqueryAlert({
+      title: $.i18n('alphatown-alert-error'),
+      message: $.i18n('alphatown-genericerror'),
+    })
   }
 
 
@@ -364,8 +397,7 @@ const showPendingPins = async () => {
     // make sure this is loaded before doing any shit
     await i18nLoaded
 
-    const show = (s) => $(s).removeClass('hide')
-    const hide = (s) => $(s).addClass('hide')
+
 
     const { data: user } = await axios.get(`/api/auth/me?guildId=${guildId}`)
     hide('.discord-login')
@@ -394,7 +426,10 @@ const showPendingPins = async () => {
 
     // close #pin-edit ui, show .login-actions
     $('.trigger-coord-select').click(() => {
-      alert($.i18n('alphatown-pinedit-location-addresswarn'))
+      jqueryAlert({
+        message: $.i18n('alphatown-pinedit-location-addresswarn'),
+        title: $.i18n('alphatown-alert-warning'),
+      })
       hide('#pin-edit')
       // we don't show the login-actions part because we want to only let user choose loc
       // show('.login-actions')
@@ -430,6 +465,7 @@ const showPendingPins = async () => {
         } else {
           map.setLayoutProperty('point', 'visibility', 'visible')
           map.flyTo({
+            speed: 3,
             center: userCoordFeature.features[0].geometry.coordinates,
             zoom: 11.15,
           })
@@ -449,6 +485,7 @@ const showPendingPins = async () => {
 
       const errors = findFormErrors(user.pin !== null)
       if (errors.length > 0) {
+
         alert(errors.join('\n'))
         return
       }

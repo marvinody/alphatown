@@ -21,9 +21,13 @@
   "alphatown-pinedit-image-display": "Image*",
   "alphatown-pinedit-image-none": "You must select an image to be associated with your pin",
   "alphatown-pinedit-image-large": "You must select an image smaller than 9 MB",
-  "alphatown-pinedit-location-addresswarn": "Do not select your actual address, pick a general place",
+  "alphatown-pinedit-location-addresswarn": "Do not select your actual address, pick a general place.\nClick to drop marker",
   "alphatown-pinedit-location-none": "You must select a location for your pin",
   "alphatown-pinedit-location-default-display": "Click to choose location",
   "alphatown-pinedit-location-display": "($1, $2) - Click to change",
-  "alphatown-pinedit-submit-display": "Submit"
+  "alphatown-pinedit-submit-display": "Submit",
+  "alphatown-general-ok": "Ok",
+  "alphatown-alert-notice": "Notice",
+  "alphatown-alert-warning": "Warning",
+  "alphatown-alert-error": "Error"
 }
