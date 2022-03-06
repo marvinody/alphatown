@@ -341,6 +341,10 @@ const updateFormData = ({
   $("input[name='image']").val('')
   $("input[name='title']").val(title)
   $("textarea[name='desc']").val(desc)
+  if (imageUrl) {
+    $("#pin-edit img.preview").attr('src', imageUrl)
+    show('#pin-edit img.preview')
+  }
   userCoordFeature.features[0].geometry.coordinates = [lng, lat]
   updateCoordText({ lng, lat })
 }
@@ -423,6 +427,15 @@ const showPendingPins = async () => {
     if (user.isAdmin) {
       show('.show-pending')
     }
+
+    // handle showing a preview on file select to show the user something
+    $('#pin-edit .image input').on('change', (e) => {
+      const files = e.target.files
+      if (files.length > 0) {
+        let src = URL.createObjectURL(files[0])
+        $('#pin-edit .image .preview').attr('src', src)
+      }
+    })
 
     // close #pin-edit ui, show .login-actions
     $('.trigger-coord-select').click(() => {

@@ -60,13 +60,14 @@ html
           for='image'
           data-i18n='alphatown-pinedit-image-display'
         ) Image*
-        div.input-container
+        div.input-container.image
           input(
             name='image'
             type='file',
             accept='.png, .jpg, .jpeg'
             multiple=false
           )
+          img.hide.preview
       
       div.form-row.center
         span.trigger-coord-select(
