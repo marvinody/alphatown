@@ -116,6 +116,16 @@ a {
     padding: 8px 16px;
 }
 
+.input-container.image {
+    flex-direction: column;
+}
+
+#pin-edit img.preview {
+    /*Causing some issues for some reason. Using align-items: center on parent reveals it*/
+    max-width: 128px;
+    max-height: 128px;
+}
+
 .input-container input, .input-container textarea {
     width: 100%;
     font-size: 16px;
