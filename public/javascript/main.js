@@ -392,7 +392,7 @@ const setAvatar = (user) => {
 
 const showPendingPins = async () => {
   const { data: pins } = await axios.get(`/api/pins/admin/${guildId}`)
-  createMapLayerWithPins('pendingPins', pins, 'bar-15')
+  createMapLayerWithPins('pendingPins', pins, 'shion')
 }
 
 
