@@ -117,6 +117,7 @@ router.put(
           // we already checked the file above if it existed, so we're good to upload
           // push to imgur
           const imgurResult = await imgurUploader.uploadBuffer(req.file.buffer);
+          console.log({ imgurResult });
           if (!imgurResult.success) {
             throw new ImgurUploadError();
           }
