@@ -1,8 +1,9 @@
-var express = require("express");
+const express = require("express");
 const multer = require("multer");
-const ImgurAnonymousUploader = require("imgur-anonymous-uploader");
-var router = express.Router();
+const router = express.Router();
 const FileType = require("file-type");
+const FormData = require("form-data");
+const axios = require("axios");
 
 const oauth = require("../../discordApi");
 const { Pin, Guild } = require("../db/models");
@@ -11,6 +12,9 @@ const {
   requireDiscordGuild,
   requireAdmin,
 } = require("../middleware");
+
+const RE_CATBOX_URL =
+  /^https?:\/\/files\.catbox\.moe\/([a-z0-9]{6}\.(?:png|jpg|webp))$/i;
 
 router.get("/:guildId", async (req, res, next) => {
   const pins = await Pin.findAllPublic(req.params.guildId);
@@ -63,7 +67,8 @@ class BadFileTypeError extends Error {
 }
 
 class ImgurUploadError extends Error {
-  constructor() {
+  constructor(errMsg) {
+    console.log({ errMsg });
     super("Unable to upload to imgur");
     this.status = 500;
   }
@@ -77,7 +82,37 @@ const upload = multer({
     files: 1,
   },
 });
-const imgurUploader = new ImgurAnonymousUploader(process.env.IMGUR_CLIENT_ID);
+
+class CatboxUploader {
+  async uploadBuffer(buffer) {
+    const form = new FormData();
+    form.append("reqtype", "fileupload");
+    form.append("fileToUpload", buffer, {
+      filename: "upload.png",
+    });
+
+    const res = await axios.default.post(
+      "https://catbox.moe/user/api.php",
+      form
+    );
+
+    if (res.status === 200 && res.data.match(RE_CATBOX_URL)) {
+      const text = res.data;
+
+      return {
+        success: true,
+        url: text,
+      };
+    }
+
+    return {
+      success: false,
+      message: await res.text(),
+    };
+  }
+}
+
+const catboxUploader = new CatboxUploader();
 
 router.put(
   "/:guildId",
@@ -116,10 +151,12 @@ router.put(
         if (req.file) {
           // we already checked the file above if it existed, so we're good to upload
           // push to imgur
-          const imgurResult = await imgurUploader.uploadBuffer(req.file.buffer);
-          console.log({ imgurResult });
+          const imgurResult = await catboxUploader.uploadBuffer(
+            req.file.buffer
+          );
+
           if (!imgurResult.success) {
-            throw new ImgurUploadError();
+            throw new ImgurUploadError(imgurResult.message);
           }
           imageUrl = imgurResult.url;
         }
@@ -138,10 +175,10 @@ router.put(
 
       // continue with regular first pin creation...
       // push image to imgur
-      const imgurResult = await imgurUploader.uploadBuffer(req.file.buffer);
-      console.log({ imgurResult });
+      const imgurResult = await catboxUploader.uploadBuffer(req.file.buffer);
+
       if (!imgurResult.success) {
-        return res.json({ error: "Unable to upload to imgur" });
+        throw new ImgurUploadError(imgurResult.message);
       }
 
       const newPin = await Pin.create({
