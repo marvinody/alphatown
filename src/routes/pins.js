@@ -139,6 +139,7 @@ router.put(
       // continue with regular first pin creation...
       // push image to imgur
       const imgurResult = await imgurUploader.uploadBuffer(req.file.buffer);
+      console.log({ imgurResult });
       if (!imgurResult.success) {
         return res.json({ error: "Unable to upload to imgur" });
       }
